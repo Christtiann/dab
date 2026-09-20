@@ -1,10 +1,18 @@
 const pptxgen = require('pptxgenjs');
 
-const BG="000000", TINT="121212", YEL="FFC709", W="FFFFFF",
-      G1="A5A5A5", G2="6E6E6E", RULE="2B2B2B";
-const F="Arial";
+// Paleta e tipografia conforme o brandbook XP (Marcel Bittencourt).
+// Amarelo #FFC709 amostrado por pixel do proprio brandbook.
+// "Roboto Slab para titulos/headlines e Roboto Sans para todo o resto."
+const BG="0D0D0D", TINT="1A1A1A", YEL="FFC709", W="FFFFFF",
+      G1="A5A5A5", G2="757575", RULE="2E2E2E";
+const F="Roboto", FT="Roboto Slab";
 const PW=13.3, M=0.7, CW=PW-2*M;
 
+// Elemento "X": duas diagonais finas cruzadas, o grafismo principal da marca.
+function xEl(s,x,y,w,h,col,wt){
+  s.addShape("line",{x,y,w,h,line:{color:col,width:wt}});
+  s.addShape("line",{x,y,w,h,line:{color:col,width:wt},flipH:true});
+}
 function newSlide(p){ const s=p.addSlide(); s.background={color:BG}; return s; }
 
 function rule(s,x,y,w,col){
@@ -14,14 +22,15 @@ function block(s,x,y,w,h){
   s.addShape("rect",{x,y,w,h,fill:{color:TINT},line:{width:0}});
 }
 function header(s, sec, title, sub){
-  s.addText(sec,{x:M,y:0.44,w:CW,h:0.26,fontSize:12,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
-  s.addText(title,{x:M,y:0.74,w:CW,h:0.58,fontSize:title.length>44?30:34,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
+  s.addText(sec,{x:M,y:0.44,w:CW,h:0.26,fontSize:11.5,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
+  s.addText(title,{x:M,y:0.74,w:CW,h:0.58,fontSize:title.length>44?26:30,bold:true,color:W,fontFace:FT,isTextBox:true,margin:0});
   if(sub) s.addText(sub,{x:M,y:1.34,w:CW,h:0.32,fontSize:13.5,color:G1,fontFace:F,isTextBox:true,margin:0});
 }
 function footer(s,n){
   rule(s,M,7.0,CW);
   s.addText("XP Investimentos  ·  Planejamento Patrimonial",{x:M,y:7.08,w:6,h:0.24,fontSize:9,color:G2,fontFace:F,isTextBox:true,margin:0});
-  s.addText(String(n).padStart(2,"0"),{x:PW-M-1,y:7.08,w:1,h:0.24,fontSize:9,color:G2,fontFace:F,align:"right",isTextBox:true,margin:0});
+  s.addText(String(n).padStart(2,"0"),{x:PW-M-1.5,y:7.08,w:1.1,h:0.24,fontSize:9,color:G2,fontFace:F,align:"right",isTextBox:true,margin:0});
+  xEl(s,PW-M-0.17,7.12,0.17,0.17,YEL,0.75);
 }
 
 const p = new pptxgen();
@@ -31,20 +40,21 @@ let s;
 
 /* ---------- 1 · CAPA ---------- */
 s = newSlide(p);
-s.addText("Planejamento Financeiro",{x:M,y:2.05,w:11.6,h:0.95,fontSize:52,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
-s.addText("Integrado",{x:M,y:2.95,w:11.6,h:0.95,fontSize:52,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
+xEl(s,8.8,1.30,3.7,3.7,YEL,2.25);
+s.addText("Planejamento",{x:M,y:2.02,w:8.0,h:0.92,fontSize:44,bold:true,color:W,fontFace:FT,isTextBox:true,margin:0});
+s.addText("Financeiro Integrado",{x:M,y:2.9,w:8.0,h:0.92,fontSize:44,bold:true,color:YEL,fontFace:FT,isTextBox:true,margin:0});
 s.addText("Estruturação consultiva para a proteção da sua família e o futuro da sua filha.",
-  {x:M,y:4.12,w:9.5,h:0.4,fontSize:16,color:G1,fontFace:F,isTextBox:true,margin:0});
+  {x:M,y:4.05,w:7.6,h:0.4,fontSize:15,color:G1,fontFace:F,isTextBox:true,margin:0});
 
 rule(s,M,5.48,CW);
 const chips=[["R$ 400.000","patrimônio total mapeado"],["3 caixas","alocação por objetivo"],["10%","em renda variável, na base total"],["R$ 0","de taxa de custódia"]];
 chips.forEach(([v,l],i)=>{
   const x=M+i*3.0;
-  s.addText(v,{x,y:5.66,w:2.8,h:0.4,fontSize:20,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
+  s.addText(v,{x,y:5.66,w:2.8,h:0.4,fontSize:19,bold:true,color:W,fontFace:FT,isTextBox:true,margin:0});
   s.addText(l,{x,y:6.06,w:2.8,h:0.48,fontSize:10.5,color:G2,fontFace:F,isTextBox:true,margin:0});
 });
-s.addText("XP Investimentos",{x:M,y:1.5,w:6,h:0.28,fontSize:12.5,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
-s.addText("Reunião de diagnóstico  ·  30 minutos",{x:PW-M-4.5,y:1.5,w:4.5,h:0.28,fontSize:11,color:G2,fontFace:F,align:"right",isTextBox:true,margin:0});
+s.addText("XP Investimentos",{x:M,y:1.5,w:5,h:0.28,fontSize:12.5,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
+s.addText("Reunião de diagnóstico  ·  30 minutos",{x:M,y:6.6,w:6,h:0.28,fontSize:11,color:G2,fontFace:F,isTextBox:true,margin:0});
 s.addNotes("Olá, é um prazer receber você. Entendemos que sua rotina como engenheiro é intensa e seu tempo é escasso. O objetivo de hoje é mostrar como a curadoria da XP pode organizar seus R$ 400 mil com segurança, eficiência fiscal e zero trabalho no seu dia a dia. São 30 minutos: diagnóstico, estrutura proposta e próximos passos.");
 
 /* ---------- 2 · DIAGNÓSTICO ---------- */
@@ -66,7 +76,7 @@ const gar=[
 ];
 gar.forEach(([v,t,d],i)=>{
   const y=2.0+i*1.85;
-  s.addText(v,{x:4.9,y,w:4.2,h:0.55,fontSize:34,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
+  s.addText(v,{x:4.9,y,w:4.2,h:0.55,fontSize:31,bold:true,color:YEL,fontFace:FT,isTextBox:true,margin:0});
   s.addText(t,{x:4.9,y:y+0.58,w:7.7,h:0.3,fontSize:14.5,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
   s.addText(d,{x:4.9,y:y+0.94,w:7.7,h:0.7,fontSize:12,color:G1,fontFace:F,lineSpacing:17,isTextBox:true,margin:0});
   if(i===0) rule(s,4.9,y+1.68,7.7);
@@ -119,7 +129,7 @@ caixas.forEach(([n,t,v,pc,pz,d],i)=>{
   const x=M+i*4.0;
   s.addText(n,{x,y:2.3,w:1,h:0.3,fontSize:12,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
   s.addText(t,{x,y:2.62,w:3.5,h:0.34,fontSize:17,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
-  s.addText(v,{x,y:3.12,w:3.5,h:0.62,fontSize:33,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
+  s.addText(v,{x,y:3.12,w:3.5,h:0.62,fontSize:29,bold:true,color:W,fontFace:FT,isTextBox:true,margin:0});
   s.addText(pc+" do patrimônio",{x,y:3.76,w:3.5,h:0.28,fontSize:11.5,color:YEL,fontFace:F,isTextBox:true,margin:0});
   rule(s,x,4.16,3.5);
   s.addText(pz,{x,y:4.3,w:3.5,h:0.28,fontSize:11.5,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
@@ -140,7 +150,7 @@ s.addNotes("Para eliminar a ansiedade com oscilação, dividimos o patrimônio e
 s = newSlide(p);
 header(s,"Caixa 01  ·  Curto prazo","Liquidez imediata e reserva de emergência","O primeiro dinheiro a sair da conta corrente e o único que nunca oscila.");
 
-s.addText("R$ 60.000",{x:M,y:2.1,w:4.1,h:0.85,fontSize:46,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
+s.addText("R$ 60.000",{x:M,y:2.1,w:4.3,h:0.85,fontSize:40,bold:true,color:YEL,fontFace:FT,isTextBox:true,margin:0});
 s.addText("15% do patrimônio total",{x:M,y:2.96,w:4.1,h:0.3,fontSize:13,color:G1,fontFace:F,isTextBox:true,margin:0});
 rule(s,M,3.5,4.1);
 s.addText("Como chegamos ao valor",{x:M,y:3.66,w:4.1,h:0.28,fontSize:11.5,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
@@ -182,8 +192,8 @@ const c2=[
 ];
 c2.forEach(([t,v,sub,d],i)=>{
   const x=M+i*4.0;
-  s.addText(t,{x,y:2.3,w:3.5,h:0.32,fontSize:16.5,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
-  s.addText(v,{x,y:2.76,w:3.5,h:0.58,fontSize:31,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
+  s.addText(t,{x,y:2.3,w:3.5,h:0.32,fontSize:15.5,bold:true,color:YEL,fontFace:FT,isTextBox:true,margin:0});
+  s.addText(v,{x,y:2.76,w:3.5,h:0.58,fontSize:27,bold:true,color:W,fontFace:FT,isTextBox:true,margin:0});
   s.addText(sub,{x,y:3.36,w:3.5,h:0.28,fontSize:11.5,color:G2,fontFace:F,isTextBox:true,margin:0});
   rule(s,x,3.76,3.5);
   s.addText(d,{x,y:3.92,w:3.5,h:1.5,fontSize:12,color:G1,fontFace:F,lineSpacing:17,isTextBox:true,margin:0});
@@ -208,7 +218,7 @@ const c3=[
 ];
 c3.forEach(([pc,v,t,d],i)=>{
   const y=2.3+i*1.34;
-  s.addText(pc,{x:M,y,w:1.3,h:0.5,fontSize:30,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
+  s.addText(pc,{x:M,y,w:1.3,h:0.5,fontSize:27,bold:true,color:YEL,fontFace:FT,isTextBox:true,margin:0});
   s.addText(v,{x:M+1.4,y:y+0.08,w:2.0,h:0.34,fontSize:16,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
   s.addText(t,{x:M+3.5,y:y+0.04,w:8.4,h:0.32,fontSize:15.5,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
   s.addText(d,{x:M+3.5,y:y+0.42,w:8.4,h:0.7,fontSize:12,color:G1,fontFace:F,lineSpacing:17,valign:"top",isTextBox:true,margin:0});
@@ -252,7 +262,7 @@ const kpis=[
 kpis.forEach(([t,v,d],i)=>{
   const y=2.22+i*1.15;
   s.addText(t,{x:8.6,y,w:4.0,h:0.26,fontSize:11,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
-  s.addText(v,{x:8.6,y:y+0.28,w:4.0,h:0.38,fontSize:20,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
+  s.addText(v,{x:8.6,y:y+0.28,w:4.0,h:0.38,fontSize:18,bold:true,color:W,fontFace:FT,isTextBox:true,margin:0});
   s.addText(d,{x:8.6,y:y+0.68,w:4.0,h:0.26,fontSize:10,color:G1,fontFace:F,isTextBox:true,margin:0});
   rule(s,8.6,y+1.0,4.0);
 });
@@ -264,7 +274,7 @@ s = newSlide(p);
 header(s,"O valor do serviço","Custo transparente e tempo preservado","As duas dores que sobraram: a reclamação com taxas e a falta de tempo para acompanhar.");
 
 rule(s,M,2.1,CW,"4A4A4A");
-s.addText("Transparência de custos",{x:M,y:2.3,w:5.6,h:0.3,fontSize:16.5,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
+s.addText("Transparência de custos",{x:M,y:2.3,w:5.6,h:0.3,fontSize:15.5,bold:true,color:YEL,fontFace:FT,isTextBox:true,margin:0});
 const col1=[
  ["Taxa zero de custódia","em renda fixa, fundos e previdência na plataforma XP."],
  ["Renda fixa","remunera pelo spread do emissor, apresentado a você antes da alocação e não depois."],
@@ -278,7 +288,7 @@ col1.forEach(([t,d],i)=>{
   if(i<3) rule(s,M,y+0.84,5.6);
 });
 
-s.addText("O seu tempo, preservado",{x:6.9,y:2.3,w:5.7,h:0.3,fontSize:16.5,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
+s.addText("O seu tempo, preservado",{x:6.9,y:2.3,w:5.7,h:0.3,fontSize:15.5,bold:true,color:YEL,fontFace:FT,isTextBox:true,margin:0});
 const col2=[
  ["Monitoramento diário","feito pela nossa equipe. Você não precisa acompanhar notícia de mercado."],
  ["Relatório trimestral","consolidado e resumido no aplicativo da XP."],
@@ -315,7 +325,7 @@ steps.forEach(([n,q,d],i)=>{
   const y=2.3+i*1.06;
   s.addText(n,{x:M,y:y+0.04,w:0.8,h:0.34,fontSize:14,bold:true,color:YEL,fontFace:F,isTextBox:true,margin:0});
   s.addText(q,{x:M+0.85,y:y+0.02,w:2.6,h:0.34,fontSize:15.5,bold:true,color:W,fontFace:F,isTextBox:true,margin:0});
-  s.addText(d,{x:M+3.5,y:y+0.04,w:8.4,h:0.72,fontSize:12.5,color:G1,fontFace:F,lineSpacing:17,valign:"top",isTextBox:true,margin:0});
+  s.addText(d,{x:M+3.5,y:y+0.04,w:8.4,h:0.72,fontSize:12,color:G1,fontFace:F,lineSpacing:17,valign:"top",isTextBox:true,margin:0});
   rule(s,M,y+0.88,CW);
 });
 
